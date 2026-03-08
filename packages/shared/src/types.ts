@@ -362,6 +362,9 @@ export interface Campaign {
   coordinates?: { lat: number; lng: number }
 }
 
+// Module group (also defined in modules.ts, duplicated here to avoid circular imports)
+export type ModuleGroup = 'vitals' | 'head_to_toe';
+
 // Custom module definition
 export interface CustomModuleDefinition {
   id: string;

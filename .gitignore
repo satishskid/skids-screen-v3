@@ -8,6 +8,13 @@ dist/
 .turbo/
 .wrangler/
 .expo/
+*.tsbuildinfo
+
+# TypeScript build artifacts in source dirs
+packages/shared/src/*.js
+packages/shared/src/*.js.map
+packages/shared/src/*.d.ts
+packages/shared/src/*.d.ts.map
 
 # Environment variables (NEVER commit)
 .env

@@ -1,9 +1,9 @@
 // Module configuration — 27+ screening modules
 // Migrated from V2 — zero business logic changes
 
-import type { ModuleType, AgeGroup } from './types'
+import type { ModuleType, AgeGroup, ModuleGroup } from './types'
 
-export type ModuleGroup = 'vitals' | 'head_to_toe';
+export type { ModuleGroup };
 
 export interface ModuleConfig {
   type: ModuleType;

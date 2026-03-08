@@ -1,7 +1,31 @@
-// API client for mobile — uses Hono RPC type-safe client
-import { createApiClient } from '@skids/api-client'
-import Constants from 'expo-constants'
+// API client for SKIDS Screen V3 mobile app
+// Simple fetch wrapper with auth token support
 
-const baseUrl = Constants.expoConfig?.extra?.apiBaseUrl || 'https://skids-api.satish-9f4.workers.dev'
+const API_BASE = 'https://skids-api.satish-9f4.workers.dev'
 
-export const api = createApiClient(baseUrl)
+export async function apiCall<T = unknown>(
+  path: string,
+  options?: RequestInit & { token?: string }
+): Promise<T> {
+  const { token, ...fetchOptions } = options || {}
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...fetchOptions,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...fetchOptions?.headers,
+    },
+  })
+
+  if (!res.ok) {
+    const errorBody = await res.text().catch(() => '')
+    throw new Error(
+      `API ${res.status}: ${res.statusText}${errorBody ? ` — ${errorBody}` : ''}`
+    )
+  }
+
+  return res.json() as Promise<T>
+}
+
+export { API_BASE }
