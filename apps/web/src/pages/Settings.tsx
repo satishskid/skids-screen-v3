@@ -1,8 +1,41 @@
-import { User, Bell, Shield, Monitor } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { User, Bell, Shield, Monitor, Activity, RefreshCw } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+
+interface HealthCheck {
+  status: string
+  latencyMs: number
+  details?: Record<string, unknown>
+}
+
+interface DetailedHealth {
+  status: string
+  version: string
+  environment: string
+  timestamp: string
+  checks: Record<string, HealthCheck>
+}
 
 export function SettingsPage() {
   const { user } = useAuth()
+  const [health, setHealth] = useState<DetailedHealth | null>(null)
+  const [healthLoading, setHealthLoading] = useState(false)
+
+  async function fetchHealth() {
+    setHealthLoading(true)
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || ''
+      const res = await fetch(`${apiUrl}/api/health/detailed`)
+      const data = await res.json()
+      setHealth(data)
+    } catch {
+      setHealth(null)
+    } finally {
+      setHealthLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchHealth() }, [])
 
   return (
     <div className="space-y-6">
@@ -166,6 +199,77 @@ export function SettingsPage() {
             provider.
           </p>
         </div>
+      </div>
+
+      {/* System Health */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+              <Activity className="h-5 w-5 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">System Health</h3>
+              <p className="text-sm text-gray-500">API and service status</p>
+            </div>
+          </div>
+          <button
+            onClick={fetchHealth}
+            disabled={healthLoading}
+            className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${healthLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
+
+        {health ? (
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className={`h-2.5 w-2.5 rounded-full ${health.status === 'healthy' ? 'bg-green-500' : 'bg-amber-500'}`} />
+              <span className="text-sm font-medium text-gray-900 capitalize">{health.status}</span>
+              <span className="text-xs text-gray-400">v{health.version} | {health.environment}</span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {Object.entries(health.checks).map(([name, check]) => (
+                <div key={name} className="rounded-lg bg-gray-50 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-700 capitalize">{name}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                      check.status === 'ok' ? 'bg-green-100 text-green-700' :
+                      check.status === 'not_configured' ? 'bg-gray-100 text-gray-500' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {check.status}
+                    </span>
+                  </div>
+                  {check.latencyMs > 0 && (
+                    <p className="text-[10px] text-gray-400 mt-1">{check.latencyMs}ms latency</p>
+                  )}
+                  {check.details && typeof check.details === 'object' && (
+                    <div className="mt-1.5 space-y-0.5">
+                      {Object.entries(check.details).map(([k, v]) => (
+                        <div key={k} className="flex justify-between text-[10px]">
+                          <span className="text-gray-500">{k}</span>
+                          <span className="text-gray-700 font-medium">{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10px] text-gray-400">
+              Last checked: {new Date(health.timestamp).toLocaleTimeString()}
+            </p>
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-400">
+            {healthLoading ? 'Checking system health...' : 'Unable to connect to API.'}
+          </p>
+        )}
       </div>
 
       {/* Version info */}

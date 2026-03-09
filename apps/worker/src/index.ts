@@ -15,6 +15,12 @@ import { r2Routes } from './routes/r2'
 import { ayusyncRoutes } from './routes/ayusync'
 import { welchallynRoutes } from './routes/welchallyn'
 import { awsProxyRoutes } from './routes/aws-proxy'
+import { aiGatewayRoutes } from './routes/ai-gateway'
+import { aiConfigRoutes } from './routes/ai-config'
+import { exportRoutes } from './routes/export'
+import { campaignProgressRoutes } from './routes/campaign-progress'
+import { screeningEventsRoutes } from './routes/screening-events'
+import { reportTokenRoutes } from './routes/report-tokens'
 import { createTursoClient } from '@skids/db'
 import { createAuth } from './auth'
 import { authMiddleware, requireRole } from './middleware/auth'
@@ -137,6 +143,35 @@ app.route('/api/campaigns', welchallynRoutes)
 app.use('/api/aws-proxy', authMiddleware)
 app.use('/api/aws-proxy/*', authMiddleware)
 app.route('/api/aws-proxy', awsProxyRoutes)
+
+// AI Gateway — require auth
+app.use('/api/ai', authMiddleware)
+app.use('/api/ai/*', authMiddleware)
+app.route('/api/ai', aiGatewayRoutes)
+
+// AI Config — require admin
+app.use('/api/ai-config', authMiddleware)
+app.use('/api/ai-config/*', authMiddleware)
+app.route('/api/ai-config', aiConfigRoutes)
+
+// Export routes — require auth
+app.use('/api/export', authMiddleware)
+app.use('/api/export/*', authMiddleware)
+app.route('/api/export', exportRoutes)
+
+// Campaign progress — require auth
+app.use('/api/campaign-progress', authMiddleware)
+app.use('/api/campaign-progress/*', authMiddleware)
+app.route('/api/campaign-progress', campaignProgressRoutes)
+
+// Screening events — require auth
+app.use('/api/screening-events', authMiddleware)
+app.use('/api/screening-events/*', authMiddleware)
+app.route('/api/screening-events', screeningEventsRoutes)
+
+// Report tokens — POST requires auth, GET/:token is public (parent access)
+app.post('/api/report-tokens', authMiddleware)
+app.route('/api/report-tokens', reportTokenRoutes)
 
 // Root
 app.get('/', (c) => {
