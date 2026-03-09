@@ -11,6 +11,7 @@ import { reviewRoutes } from './routes/reviews'
 import { healthRoutes } from './routes/health'
 import { createTursoClient } from '@skids/db'
 import { createAuth } from './auth'
+import { authMiddleware, requireRole } from './middleware/auth'
 import type { Client } from '@libsql/client'
 
 // Cloudflare Workers bindings
@@ -40,12 +41,20 @@ const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
 // ── Global middleware ────────────────────────
 app.use('*', logger())
 app.use('*', cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://skids-ai.vercel.app',
-    'https://skids-web.pages.dev',
-  ],
+  origin: (origin) => {
+    // Allow known web origins
+    const allowed = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://localhost:8081',
+      'https://skids-ai.vercel.app',
+      'https://skids-web.pages.dev',
+    ]
+    if (allowed.includes(origin)) return origin
+    // Allow mobile (no origin) and Expo dev
+    if (!origin || origin.startsWith('exp://')) return origin || '*'
+    return 'https://skids-web.pages.dev'
+  },
   credentials: true,
 }))
 
@@ -66,8 +75,21 @@ app.all('/api/auth/*', async (c) => {
   return auth.handler(c.req.raw)
 })
 
-// ── Routes ──────────────────────────────────
+// ── Auth-protected routes ───────────────────
+// Health check is public
 app.route('/api/health', healthRoutes)
+
+// Protected routes — require valid session
+// Note: must cover both base path and sub-paths
+app.use('/api/campaigns', authMiddleware)
+app.use('/api/campaigns/*', authMiddleware)
+app.use('/api/children', authMiddleware)
+app.use('/api/children/*', authMiddleware)
+app.use('/api/observations', authMiddleware)
+app.use('/api/observations/*', authMiddleware)
+app.use('/api/reviews', authMiddleware)
+app.use('/api/reviews/*', authMiddleware)
+
 app.route('/api/campaigns', campaignRoutes)
 app.route('/api/children', childrenRoutes)
 app.route('/api/observations', observationRoutes)

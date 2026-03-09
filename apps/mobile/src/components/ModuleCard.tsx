@@ -4,7 +4,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { getColorHex, COLORS } from '../lib/colors'
-import type { ModuleConfig } from '@skids/shared'
+import type { ModuleConfig } from '../lib/modules'
 
 interface ModuleCardProps {
   module: ModuleConfig

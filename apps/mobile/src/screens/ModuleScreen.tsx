@@ -16,8 +16,9 @@ import {
 import { colors, spacing, borderRadius, fontSize, fontWeight, shadow, getColorHex } from '../theme'
 import { useAuth } from '../lib/AuthContext'
 import { apiCall } from '../lib/api'
-import { MODULE_CONFIGS, getModuleConfig } from '@skids/shared'
-import type { ModuleType, ModuleConfig } from '@skids/shared'
+import { MODULE_CONFIGS, getModuleConfig } from '../lib/modules'
+import type { ModuleConfig } from '../lib/modules'
+import type { ModuleType } from '../lib/types'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RouteProp } from '@react-navigation/native'
 

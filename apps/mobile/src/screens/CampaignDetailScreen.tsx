@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors, spacing, borderRadius, fontSize, fontWeight, shadow } from '../theme'
 import { useAuth } from '../lib/AuthContext'
 import { apiCall } from '../lib/api'
-import type { Campaign, Child } from '@skids/shared'
+import type { Campaign, Child } from '../lib/types'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RouteProp } from '@react-navigation/native'
 
@@ -24,6 +24,7 @@ type RootStackParamList = {
   CampaignDetail: { campaign: Campaign }
   RegisterChild: { campaignCode: string }
   Screening: { campaignCode: string }
+  ObservationList: { campaignCode: string; campaignName: string }
 }
 
 interface Props {
@@ -64,7 +65,7 @@ export function CampaignDetailScreen({ navigation, route }: Props) {
       const childData = await apiCall<{ children?: Child[]; data?: Child[] }>(
         `/api/campaigns/${campaign.code}/children`,
         { token: token || undefined }
-      ).catch(() => ({ children: [] as Child[] }))
+      ).catch(() => ({ children: [] as Child[] } as { children?: Child[]; data?: Child[] }))
 
       const childList =
         childData.children || childData.data || (Array.isArray(childData) ? childData : [])
@@ -78,7 +79,7 @@ export function CampaignDetailScreen({ navigation, route }: Props) {
       }>(
         `/api/campaigns/${campaign.code}/stats`,
         { token: token || undefined }
-      ).catch(() => ({}))
+      ).catch(() => ({ children: 0, observations: 0, reviews: 0 }))
 
       setStats({
         childrenCount: statsData.children || (childList as Child[]).length || campaign.totalChildren || 0,
@@ -210,6 +211,25 @@ export function CampaignDetailScreen({ navigation, route }: Props) {
             <Text style={[styles.actionIcon, { color: colors.white }]}>{'>'}</Text>
             <Text style={[styles.actionText, { color: colors.white }]}>
               Start Screening
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* View Observations (useful for doctors/reviewers) */}
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={[styles.actionButton, { borderColor: colors.secondary }]}
+            onPress={() =>
+              navigation.navigate('ObservationList', {
+                campaignCode: campaign.code,
+                campaignName: campaign.name,
+              })
+            }
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.actionIcon, { color: colors.secondary }]}>{'\u{1F50D}'}</Text>
+            <Text style={[styles.actionText, { color: colors.secondary }]}>
+              View Observations
             </Text>
           </TouchableOpacity>
         </View>

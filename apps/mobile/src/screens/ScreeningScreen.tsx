@@ -10,8 +10,9 @@ import {
   StyleSheet,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { MODULE_CONFIGS } from '@skids/shared'
-import type { ModuleConfig, ModuleType } from '@skids/shared'
+import { MODULE_CONFIGS } from '../lib/modules'
+import type { ModuleConfig } from '../lib/modules'
+import type { ModuleType } from '../lib/types'
 import { colors, spacing, borderRadius, fontSize, fontWeight, shadow, getColorHex } from '../theme'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 

@@ -23,9 +23,8 @@ export const authMiddleware = createMiddleware<{
     }
 
     c.set('userId', session.user.id)
-    // Role will come from organization membership
-    // For now, default to the user's base role
-    c.set('userRole', 'nurse')
+    // Read role from user.additionalFields (stored on user table)
+    c.set('userRole', (session.user as Record<string, unknown>).role as string || 'nurse')
 
     await next()
   } catch {

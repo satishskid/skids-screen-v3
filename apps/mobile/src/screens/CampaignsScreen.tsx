@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors, spacing, borderRadius, fontSize, fontWeight, shadow } from '../theme'
 import { useAuth } from '../lib/AuthContext'
 import { apiCall } from '../lib/api'
-import type { Campaign } from '@skids/shared'
+import type { Campaign } from '../lib/types'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 type RootStackParamList = {
