@@ -237,6 +237,9 @@ function CreateCampaignModal({
   const [schoolName, setSchoolName] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+  const [district, setDistrict] = useState('')
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
   const [campaignType, setCampaignType] = useState<CampaignType>('school_health_4d')
   const [selectedModules, setSelectedModules] = useState<string[]>(
     CAMPAIGN_TEMPLATES[0].defaultModules,
@@ -284,6 +287,9 @@ function CreateCampaignModal({
           enabledModules: selectedModules,
           city: city.trim() || undefined,
           state: state.trim() || undefined,
+          district: district.trim() || undefined,
+          address: address.trim() || undefined,
+          pincode: pincode.trim() || undefined,
         }),
       })
       onCreated()
@@ -422,6 +428,46 @@ function CreateCampaignModal({
                   placeholder="e.g., Maharashtra"
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  District
+                </label>
+                <input
+                  type="text"
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="e.g., Pune"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Pincode
+                </label>
+                <input
+                  type="text"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="e.g., 411001"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Address
+              </label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder="e.g., 123 School Road, Sector 5"
+              />
             </div>
 
             {/* Module Selection */}

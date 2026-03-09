@@ -134,7 +134,16 @@ export function computeCampaignProgress(
   }
 
   for (const child of childStatuses) {
-    stats[child.status]++
+    switch (child.status) {
+      case 'to_screen': stats.toScreen++; break
+      case 'absent': stats.absent++; break
+      case 'in_progress': stats.inProgress++; break
+      case 'screened': stats.screened++; break
+      case 'synced': stats.synced++; break
+      case 'under_review': stats.underReview++; break
+      case 'complete': stats.complete++; break
+      case 'retake': stats.retake++; break
+    }
   }
 
   stats.overallCompletionPercent = stats.totalChildren > 0

@@ -11,6 +11,8 @@ import { SettingsPage } from './pages/Settings'
 import { DoctorInboxPage } from './pages/DoctorInbox'
 import { AuthorityDashboardPage } from './pages/AuthorityDashboard'
 import { FourDReportPage } from './pages/FourDReport'
+import { ChildReportPage } from './pages/ChildReport'
+import { ParentReportPage } from './pages/ParentReport'
 import { DocsHubPage } from './pages/docs/DocsHub'
 import { QuickStartPage } from './pages/docs/QuickStart'
 import { FieldGuidePage } from './pages/docs/FieldGuide'
@@ -23,8 +25,9 @@ export function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public route */}
+          {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/report/:token" element={<ParentReportPage />} />
 
           {/* Protected routes with sidebar layout */}
           <Route element={<Layout />}>
@@ -32,6 +35,7 @@ export function App() {
             <Route path="/campaigns" element={<CampaignsPage />} />
             <Route path="/campaigns/:code" element={<CampaignDetailPage />} />
             <Route path="/campaigns/:code/children/:childId/report" element={<FourDReportPage />} />
+            <Route path="/campaigns/:code/children/:childId/child-report" element={<ChildReportPage />} />
             <Route path="/doctor-inbox" element={<DoctorInboxPage />} />
             <Route path="/authority" element={<AuthorityDashboardPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
