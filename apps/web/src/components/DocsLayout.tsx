@@ -81,7 +81,7 @@ export function DocsLayout() {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-7xl">
+      <div className="mx-auto flex flex-col lg:flex-row max-w-7xl">
         {/* Sidebar */}
         <nav className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-gray-200 bg-white p-4 lg:block">
           <div className="space-y-1">
@@ -106,7 +106,7 @@ export function DocsLayout() {
         </nav>
 
         {/* Mobile nav */}
-        <div className="sticky top-14 z-20 flex gap-1 overflow-x-auto border-b border-gray-200 bg-white px-4 py-2 lg:hidden">
+        <div className="sticky top-14 z-20 flex w-full gap-1 overflow-x-auto border-b border-gray-200 bg-white px-4 py-2 lg:hidden">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}

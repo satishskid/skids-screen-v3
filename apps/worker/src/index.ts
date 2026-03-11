@@ -23,6 +23,7 @@ import { screeningEventsRoutes } from './routes/screening-events'
 import { reportTokenRoutes } from './routes/report-tokens'
 import { pinAuthRoutes } from './routes/pin-auth'
 import { educationRoutes } from './routes/education'
+import { accountRoutes } from './routes/account'
 import { createTursoClient } from '@skids/db'
 import { createAuth } from './auth'
 import { authMiddleware, requireRole } from './middleware/auth'
@@ -177,6 +178,11 @@ app.route('/api/screening-events', screeningEventsRoutes)
 // Report tokens — POST requires auth, GET/:token is public (parent access)
 app.post('/api/report-tokens', authMiddleware)
 app.route('/api/report-tokens', reportTokenRoutes)
+
+// Self-service account routes — require auth (any role)
+app.use('/api/account', authMiddleware)
+app.use('/api/account/*', authMiddleware)
+app.route('/api/account', accountRoutes)
 
 // Education — public endpoint (used by parent report)
 app.route('/api/education', educationRoutes)
